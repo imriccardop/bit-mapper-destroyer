@@ -117,8 +117,8 @@ Output: </br>
 
 Randomized corruption with custom threshold:
 ```bash
-python3 bit_mapper_destroyer.py samples/sample_1.gif samples/sample_1_r.gif -t 128 -r -v
-python3 bit_mapper_destroyer.py samples/sample_2.gif samples/sample_2_r.gif -t 128 -r -v
+python3 bit_mapper_destroyer.py samples/sample_1.gif samples/sample_1_r.gif -t 110 -r -v
+python3 bit_mapper_destroyer.py samples/sample_2.gif samples/sample_2_r.gif -t 170 -r -v
 ```
 Output: </br>
 
