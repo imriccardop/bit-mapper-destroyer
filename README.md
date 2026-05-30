@@ -89,7 +89,7 @@ python3 bit_mapper_destroyer.py video.mp4 -ds -4 -rf NEAREST -r -v
 
 ---
 
-A pre-built `.dmg` is available on the [releases page](https://github.com/user/bit-mapper-destroyer/releases). Download, mount, and drag to `/Applications`.
+A pre-built `.dmg` is available on the [releases page](https://github.com/imriccardop/bit-mapper-destroyer/tree/main/dist). Download, mount, and drag to `/Applications`.
 
 ---
 
