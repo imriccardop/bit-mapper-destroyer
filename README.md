@@ -1,145 +1,95 @@
-# BitMapper Destroyer 
+# BitMapper Destroyer
 
-Convert RGB images, GIFs, and videos to corrupted black and white versions with customizable glitch effects.
+Convert RGB images, GIFs, and videos to corrupted black & white versions with customizable glitch effects.
 
-A CLI tool for batch corruption, dithering, downscaling, and artistic degradation of visual media. Perfect for pixel art, glitch aesthetic, data obfuscation, or experimental video processing.
-All parameters are optional and combinable: pass multiple flags for more destructive corruption.
----
-
-## Features
-
-- Multi-format support: Static images (JPG, PNG), animated GIFs, videos (MP4, AVI, MOV, MKV, WebM, etc.)
-- Dithering modes: Floyd-Steinberg or simple threshold
-- Scaling effects: Downscale-then-upscale for intentional pixelation and glitch
-- Resampling filters: LANCZOS, BICUBIC, BILINEAR, NEAREST, BOX, HAMMING
-- Randomization: Stochastic threshold for corruption
-- BMP export: Optional bitmap output for images
-- Batch-friendly: Auto-generated output filenames, verbose logging
-- Frame-by-frame processing: Full control over GIF and video frame pipeline
-- Performance: NumPy-free, lightweight dependencies (Pillow, OpenCV)
+A tool for batch corruption, dithering, downscaling, pixel sorting, datamoshing, and artistic degradation of visual media. Perfect for pixel art, glitch aesthetic, data obfuscation, or experimental video processing.
 
 ---
 
 ## Installation
 
-### Prerequisites
-- python3 3.8+
-- pip3 (python3 package manager)
+### macOS App (recommended)
 
-### Setup
+Download the latest `.dmg` from releases, mount it, and drag `BitMapper Destroyer.app` to `/Applications`.
+
+### From source
 
 ```bash
-pip3 install Pillow opencv-python3
+pip3 install Pillow opencv-python numpy PySide6
+python3 bitmapper_destroyer_gui.py
 ```
 
 ---
 
-## Usage
+## GUI Features
 
-### Basic Syntax
+### Input
+- Drag & drop or file browser
+- Supports JPG, PNG, GIF, MP4, AVI, MOV, MKV, WebM, and more
+- Live preview with native video playback
+
+### Dither Modes
+| Mode | Description |
+|------|-------------|
+| None | PIL fixed threshold at 127 |
+| Floyd-Steinberg | Error diffusion dithering |
+| Custom Threshold | Manual threshold (1–255) with optional stochastic noise |
+| Percent Threshold | Adaptive threshold based on target white % (histogram-based) |
+
+### Glitch Effects
+| Effect | Parameters |
+|--------|-----------|
+| Bloom | Radius |
+| Data Corruption | Probability, Target (All/White/Black) |
+| Block Shift | Probability, Block Size, Amplitude |
+| Pixel Sorting | Probability, Direction (Ascending/Descending/Random) |
+| Line Shift | Probability, Amplitude |
+| Pixel Scatter | Probability, Radius |
+| Mirror Segments | Probability, Max Size, Direction (Horizontal/Vertical/Random) |
+| BW Reverse | On/Off |
+
+### Scaling
+- Presets: 1, 1/2, 1/3, 1/4, 1/8, 1/16
+- Configurable resampling filter (LANCZOS, BICUBIC, BILINEAR, NEAREST, BOX, HAMMING)
+- Resize after downscale option
+
+### Output
+- Auto Save: saves alongside source file
+- Manual Save: saves to temp, then export on demand
+
+---
+
+## CLI Usage
+
 ```bash
 python3 bit_mapper_destroyer.py <source> [target] [options]
 ```
 
-### Help
-```bash
-python3 bit_mapper_destroyer.py -h
-```
+### Options
 
-Output:
-```
-usage: bit_mapper_destroyer.py [-h] [-t THRESHOLD] [-d [DITHER]] [-ds DOWNSCALE] [-rf RESAMPLING_FILTER] [-r] [-bmp] [-v] source_file_name [target_file_name]
+| Flag | Type | Default | Description |
+|------|------|---------|-------------|
+| `source` | PATH | required | Input file (image, GIF, or video) |
+| `target` | PATH | auto | Output file path (optional) |
+| `-t, --threshold` | INT (1–255) | 128 | Black and white threshold value |
+| `-d, --dither` | NONE, FLOYDSTEINBERG | none | Dithering algorithm |
+| `-ds, --downscale` | FLOAT | 1 | Scale factor |
+| `-rf, --resampling_filter` | LANCZOS, BICUBIC, BILINEAR, NEAREST, BOX, HAMMING | NEAREST | Resampling method |
+| `-r, --randomize` | BOOL | false | Add stochastic noise to threshold |
+| `-bmp, --bitmap` | BOOL | false | Save as BMP alongside output |
+| `-v, --verbose` | BOOL | false | Verbose output |
 
-BitMapper Convert images/GIFs/videos to corrupted B&W
-
-positional arguments:
-  source_file_name      Source file (image, GIF, or video)
-  target_file_name      Output file (optional, auto-generated if omitted)
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -t THRESHOLD, --threshold THRESHOLD
-                        B&W threshold value 0-255 (default: 128)
-  -d [DITHER], --dither [DITHER]
-                        Dithering: NONE or FLOYDSTEINBERG (optional)
-  -ds DOWNSCALE, --downscale DOWNSCALE
-                        Scale factor: <0 downscale+upscale, >1 upscale (default: 1)
-  -rf RESAMPLING_FILTER, --resampling_filter RESAMPLING_FILTER
-                        Resampling: LANCZOS, BICUBIC, BILINEAR, NEAREST, BOX, HAMMING (default: NEAREST)
-  -r, --randomize       Add randomization to threshold
-  -bmp, --bitmap        Also save as BMP (images only)
-  -v, --verbose         Verbose output
-```
-
-
-### Images
-
-Unprocessed images: </br>![sample_1](/samples/sample_1.gif) ![sample_2](/samples/sample_2.gif) 
-
-Simple threshold conversion:
-```bash
-python3 bit_mapper_destroyer.py samples/sample_1.gif samples/sample_1_t_100.gif -t 100
-python3 bit_mapper_destroyer.py samples/sample_2.gif samples/sample_2_t_100.gif -t 100  
-```
-Output: </br>
-
-![sample_1_processed](/samples/sample_1_processed_t_100.gif)
-![sample_2_processed](/samples/sample_2_processed_t_100.gif)
+### Examples
 
 ```bash
-python3 bit_mapper_destroyer.py samples/sample_1.gif samples/sample_1_t_150.gif -t 150
-python3 bit_mapper_destroyer.py samples/sample_2.gif samples/sample_2_t_150.gif -t 150 
+python3 bit_mapper_destroyer.py image.jpg -t 100
+python3 bit_mapper_destroyer.py input.gif output.gif -d FLOYDSTEINBERG
+python3 bit_mapper_destroyer.py video.mp4 -ds -4 -rf NEAREST -r -v
 ```
-Output: </br>
-
-![sample_1_processed](/samples/sample_1_processed_t_150.gif)
-![sample_2_processed](/samples/sample_2_processed_t_150.gif)
-
-Floyd-Steinberg dithering:
-```bash
-python3 bit_mapper_destroyer.py samples/sample_1.gif samples/sample_1_d_FLOYDSTEINBERG.gif -d FLOYDSTEINBERG
-python3 bit_mapper_destroyer.py samples/sample_2.gif samples/sample_2_d_FLOYDSTEINBERG.gif -d FLOYDSTEINBERG
-```
-Output: </br>
-
-![sample_1_processed](/samples/sample_1_d_FLOYDSTEINBERG.gif)
-![sample_2_processed](/samples/sample_2_d_FLOYDSTEINBERG.gif)
-
-Pixelated effect (1/4 resolution downscale, upscaled with nearest neighbor):
-```bash
-python3 bit_mapper_destroyer.py samples/sample_1.gif samples/sample_1_ds_-4.gif -ds -4 -rf NEAREST -v
-python3 bit_mapper_destroyer.py samples/sample_2.gif samples/sample_2_ds_-4.gif -ds -4 -rf NEAREST -v
-```
-Output: </br>
-
-![sample_1_processed](/samples/sample_1_ds_-4.gif)
-![sample_2_processed](/samples/sample_2_ds_-4.gif)
-
-Randomized corruption with custom threshold:
-```bash
-python3 bit_mapper_destroyer.py samples/sample_1.gif samples/sample_1_r.gif -t 110 -r -v
-python3 bit_mapper_destroyer.py samples/sample_2.gif samples/sample_2_r.gif -t 170 -r -v
-```
-Output: </br>
-
-![sample_1_processed](/samples/sample_1_r.gif)
-![sample_2_processed](/samples/sample_2_r.gif)
 
 ---
 
-## Options Reference
-
-| Flag | Type | Default | Description                                                         |
-|------|------|---------|---------------------------------------------------------------------|
-| `source` | PATH | required | Input file (image, GIF, or video)                                   |
-| `target` | PATH | auto | Output file path (optional)                                         |
-| `-t, --threshold` | INT (0-255) | 128 | Black and white threshold value                                     |
-| `-d, --dither` | NONE, FLOYDSTEINBERG | none | Dithering algorithm (optional)                                      |
-| `-ds, --downscale` | FLOAT | 1 | Scale factor (negative: downscale, positive: upscale, 1: no change) |
-| `-rf, --resampling_filter` | LANCZOS, BICUBIC, BILINEAR, NEAREST, BOX, HAMMING | NEAREST | Resampling method for scaling                                       |
-| `-r, --randomize` | BOOL | false | Add stochastic noise to threshold                                   |
-| `-bmp, --bitmap` | BOOL | false | Save as BMP alongside output (images only)                          |
-| `-v, --verbose` | BOOL | false | Verbose console logging                                             |
+A pre-built `.dmg` is available on the [releases page](https://github.com/user/bit-mapper-destroyer/releases). Download, mount, and drag to `/Applications`.
 
 ---
 
